@@ -8,6 +8,9 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Function;
+import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SimpleListTests {
 
 	private final Logger logger = LogManager.getLogger();
-	private SimpleList testList;
+	private SimpleList<Integer> testList;
+	private SimpleList<String> stringList;
 
 	@BeforeEach
 	void setup(){
@@ -29,6 +33,14 @@ public class SimpleListTests {
 		testList.add(3);
 		testList.add(4);
 		testList.add(5);
+
+		stringList = new SimpleListImpl();
+
+		stringList.add("Wert:1");
+		stringList.add("Wert:2");
+		stringList.add("Wert:3");
+		stringList.add("Wert:4");
+		stringList.add("Wert:5");
 	}
 
 	@Test
@@ -71,6 +83,23 @@ public class SimpleListTests {
 		for(Object o : result){
 			int i = (int)o;
 			assertTrue(i % 2 == 0);
+		}
+	}
+
+	@Test
+	void testMapTransform(){
+		logger.info("Testing the map Methode");
+		SimpleList<String> result = testList.map(new Function<Integer, String>() {
+			@Override
+			public String apply(Integer integer) {
+				return "Wert:" + integer;
+			}
+		});
+		Iterator<Integer> iteri = testList.iterator();
+		Iterator<String> iters = result.iterator();
+
+		while(iters.hasNext()) {
+			assertEquals("Wert:" + iteri.next(), iters.next());//Expected: Wert:true Actual: true
 		}
 	}
 }
